@@ -15,7 +15,7 @@ import { House } from 'lucide-react';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
 
-export default function LoginForm() {
+export default function FormTest() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {

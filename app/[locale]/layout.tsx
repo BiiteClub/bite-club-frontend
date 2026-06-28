@@ -12,6 +12,7 @@ import { Button } from '../../components/ui/button';
 import { contentFont, headFont } from '@/utils/fonts';
 import { Toaster } from '@/components/ui/sonner';
 import { QueryProvider } from '@/providers/query-provider';
+import { ThemeProvider } from '@/providers/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -25,30 +26,32 @@ type Props = {
 
 export default async function RootLayout({ children, params }: Props) {
   const { locale } = await params;
-  const messages = await getMessages();
-  const direction = getLangDir(locale);
 
-  if (!hasLocale(routing.locales, locale)) {
+  if (!routing.locales.includes(locale as 'en' | 'ar')) {
     notFound();
   }
+
+  const messages = await getMessages();
+  const direction = getLangDir(locale);
 
   return (
     <html
       lang={locale}
       dir={direction}
+      suppressHydrationWarning
       className={`${contentFont.variable} ${headFont.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         {direction === 'rtl' ? (
           <NextLoader
             zIndex={99999999999999}
-            color="red"
+            color="var(--primary)"
             height={6}
             showSpinner={true}
           />
         ) : (
           <NextTopLoader
             zIndex={99999999999999}
-            color="blue"
+            color="var(--primary)"
             height={6}
             showSpinner={true}
           />
@@ -58,18 +61,7 @@ export default async function RootLayout({ children, params }: Props) {
 
         <NextIntlClientProvider locale={locale} messages={messages}>
           <QueryProvider>
-            <Link href="/" className="text-blue-500">
-              Home
-            </Link>
-            <Link href="/users" className="text-blue-500">
-              Users
-            </Link>
-            <Link href="/login" className="text-blue-500">
-              Login
-            </Link>
-
-            <Button>HELLO</Button>
-            {children}
+            <ThemeProvider>{children}</ThemeProvider>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>

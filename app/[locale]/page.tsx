@@ -1,4 +1,6 @@
+'use client';
 import { useTranslations } from 'next-intl';
+import { notFound } from 'next/navigation';
 import { use } from 'react';
 
 export default function Home({ params }) {
