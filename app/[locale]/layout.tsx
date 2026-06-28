@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import './globals.css';
+import '../globals.css';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
@@ -13,6 +13,8 @@ import { contentFont, headFont } from '@/utils/fonts';
 import { Toaster } from '@/components/ui/sonner';
 import { QueryProvider } from '@/providers/query-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { GoogleMapsProvider } from '@/providers/google-map-provider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -61,7 +63,11 @@ export default async function RootLayout({ children, params }: Props) {
 
         <NextIntlClientProvider locale={locale} messages={messages}>
           <QueryProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <GoogleMapsProvider>
+                <TooltipProvider>{children}</TooltipProvider>
+              </GoogleMapsProvider>
+            </ThemeProvider>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>

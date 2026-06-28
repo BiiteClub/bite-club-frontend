@@ -228,6 +228,22 @@
       "success": "Password reset successful! You can now log in with your new password.",
       "error": "Failed to reset password. Please try again."
     }
+  },
+  "sidebar": {
+    "home": "Home",
+    "restaurants": "Restaurants",
+    "orders": "Orders",
+    "points": "Points",
+    "gifts": "Gifts",
+    "groups": "Groups",
+    "profile": "Profile",
+    "friends": "Friends",
+    "feed": "Feed",
+    "favorites": "Favorites",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "cart": "Cart",
+    "logout": "Logout"
   }
 }
 

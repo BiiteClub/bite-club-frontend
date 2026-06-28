@@ -1,5 +1,5 @@
 import Logo from '@/components/auth/logo';
-import Selectors from '@/components/auth/Selectors';
+import Selectors from '@/components/navbar/Selectors';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
