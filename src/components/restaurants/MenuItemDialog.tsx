@@ -8,14 +8,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import MenuItemCustomizer from './MenuItemCustomizer';
+import type { RestaurantDetail } from '@/types/restaurant/restaurant';
 
 type Props = {
   item: MenuItem | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  restaurant: RestaurantDetail;
 };
 
-export default function MenuItemDialog({ item, open, onOpenChange }: Props) {
+export default function MenuItemDialog({
+  restaurant,
+  item,
+  open,
+  onOpenChange,
+}: Props) {
   if (!item) {
     return null;
   }
@@ -30,9 +37,11 @@ export default function MenuItemDialog({ item, open, onOpenChange }: Props) {
           key={item.id}
           item={item}
           variant="dialog"
+          restaurant={restaurant}
           onAddToCart={() => onOpenChange(false)}
         />
       </DialogContent>
     </Dialog>
   );
 }
+

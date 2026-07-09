@@ -45,7 +45,12 @@ export default async function MenuItemPage({ params }: PageProps) {
 
       <Card>
         <CardContent className="">
-          <MenuItemCustomizer key={item.id} item={item} variant="page" />
+          <MenuItemCustomizer
+            key={item.id}
+            item={item}
+            variant="page"
+            restaurant={restaurant}
+          />
         </CardContent>
       </Card>
     </div>

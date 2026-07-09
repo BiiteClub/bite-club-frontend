@@ -15,6 +15,10 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { Field, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
+import { useCartStore } from '@/stores/cart';
+import { getGuestSessionId } from '@/utils/session';
+import { useSessionStore } from '@/stores/session';
+import type { RestaurantDetail } from '@/types/restaurant/restaurant';
 
 type Selections = Record<string, string | string[]>;
 
@@ -22,6 +26,8 @@ type Props = {
   item: MenuItem;
   variant?: 'dialog' | 'page';
   onAddToCart?: () => void;
+  cartType: 'individual' | 'group';
+  restaurant: RestaurantDetail;
 };
 
 function getInitialSelections(options: ItemOptionGroup[]): Selections {
@@ -83,12 +89,15 @@ function isSelectionValid(item: MenuItem, selections: Selections): boolean {
 export default function MenuItemCustomizer({
   item,
   variant = 'dialog',
+  restaurant,
   onAddToCart,
+  cartType = 'individual',
 }: Props) {
   const [selections, setSelections] = useState<Selections>(() =>
     getInitialSelections(item.options),
   );
   const [quantity, setQuantity] = useState(1);
+  const [specialInstructions, setSpecialInstructions] = useState('');
 
   const total = useMemo(
     () => calculateTotal(item, selections, quantity),
@@ -128,6 +137,95 @@ export default function MenuItemCustomizer({
       };
     });
   };
+
+  const cart = useCartStore((state) => state.cart);
+
+  const setCart = useCartStore((state) => state.setCart);
+
+  const addItem = useCartStore((state) => state.addItem);
+
+  const name = useSessionStore((state) => state.name);
+
+  const sessionId = useSessionStore((state) => state.sessionId);
+
+  function handleAddToCart() {
+    if (!canAddToCart) {
+      return;
+    }
+
+    const selectedOptions = item.options.flatMap((group) => {
+      const selected = selections[group.id];
+
+      if (group.type === 'single' && typeof selected === 'string') {
+        const option = group.options.find((entry) => entry.id === selected);
+        return option ? [{ groupId: group.id, ...option }] : [];
+      }
+
+      if (group.type === 'multiple' && Array.isArray(selected)) {
+        return selected
+          .map((optionId) => {
+            const option = group.options.find((entry) => entry.id === optionId);
+            return option ? { groupId: group.id, ...option } : null;
+          })
+          .filter(Boolean) as {
+          groupId: string;
+          id: string;
+          name: string;
+          price: number;
+        }[];
+      }
+
+      return [];
+    });
+
+    const cartItem = {
+      cartItemId: crypto.randomUUID(),
+      itemId: item.id.toString(),
+      name: item.name,
+      image: item.image,
+      quantity,
+      basePrice: item.price,
+      unitPrice: total / quantity,
+      totalPrice: total,
+      configurationKey: JSON.stringify(selections),
+      selectedOptions: selectedOptions.map((option) => ({
+        groupId: option.groupId,
+        groupName:
+          item.options.find((g) => g.id === option.groupId)?.title || '',
+        optionId: option.id,
+        optionName: option.name,
+        price: option.price,
+      })),
+      specialInstructions: specialInstructions || undefined,
+      addedBy: {
+        sessionId: sessionId ?? undefined,
+        userId: undefined,
+        name: name ?? undefined,
+      },
+    };
+
+    if (!cart) {
+      setCart({
+        id: crypto.randomUUID(),
+        type: 'individual',
+        status: 'active',
+        restaurantId: String(item.restaurantId),
+        restaurantName: restaurant.name,
+        restaurantImage: restaurant.logo,
+        restaurantDeliveryFee: restaurant.minDeliveryPrice,
+        userId: undefined,
+        sessionId: sessionId ?? undefined,
+        members: [],
+        items: [],
+      });
+    }
+
+    addItem(cartItem);
+
+    if (onAddToCart) {
+      onAddToCart();
+    }
+  }
 
   return (
     <div className={cn('space-y-5', variant === 'page' && '')}>
@@ -256,6 +354,8 @@ export default function MenuItemCustomizer({
               id="instructions"
               type="text"
               placeholder="Add any special instructions..."
+              value={specialInstructions}
+              onChange={(e) => setSpecialInstructions(e.target.value)}
             />
           </Field>
         </div>
@@ -289,7 +389,7 @@ export default function MenuItemCustomizer({
           type="button"
           className="flex-1"
           disabled={!canAddToCart}
-          onClick={onAddToCart}>
+          onClick={handleAddToCart}>
           Add to cart · {total.toFixed(2)} EGP
         </Button>
       </div>

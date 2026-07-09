@@ -230,6 +230,7 @@ export default function RestaurantMenuView({ restaurant, items }: Props) {
       </div>
 
       <MenuItemDialog
+        restaurant={restaurant}
         item={selectedItem}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
