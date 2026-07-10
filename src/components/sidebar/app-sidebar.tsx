@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 
-import { NavMain } from '@/components/sidebar/nav-main';
 import { NavProjects } from '@/components/sidebar/nav-projects';
 import { NavUser } from '@/components/sidebar/nav-user';
 import { TeamSwitcher } from '@/components/sidebar/team-switcher';
@@ -14,40 +13,33 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import {
-  GalleryVerticalEndIcon,
-  AudioLinesIcon,
-  TerminalIcon,
-  TerminalSquareIcon,
-  BotIcon,
-  BookOpenIcon,
-  Settings2Icon,
-  FrameIcon,
-  PieChartIcon,
-  MapIcon,
-  House,
-  Utensils,
-  Logs,
+  BellIcon,
+  CircleUserRound,
   Coins,
   Gift,
-  Users,
-  CircleUserRound,
   Handshake,
-  Newspaper,
   Heart,
+  House,
+  Logs,
+  Newspaper,
   Settings,
-  BellIcon,
   ShoppingCartIcon,
+  Users,
+  Utensils,
 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { getLangDir } from 'rtl-detect';
-
-// This is sample data.
+import { useCartStore } from '@/stores/cart';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const locale = useLocale();
   const direction = getLangDir(locale);
   const side = direction === 'rtl' ? 'right' : 'left';
   const t = useTranslations('sidebar');
+  const itemCount = useCartStore(
+    (state) =>
+      state.cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0,
+  );
 
   const data = {
     user: {
@@ -101,7 +93,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '/feed',
         icon: Newspaper,
       },
-
       {
         name: t('favorites'),
         url: '/favorites',
@@ -121,6 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         name: t('cart'),
         url: '/cart',
         icon: ShoppingCartIcon,
+        badge: itemCount,
       },
     ],
   };
@@ -140,4 +132,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
-

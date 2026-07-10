@@ -4,44 +4,67 @@ import { type LucideIcon } from 'lucide-react';
 
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Link, usePathname } from '@/i18n/navigation';
+import { cn } from '@/lib/utils';
 
-export function NavProjects({
-  projects,
-}: {
-  projects: {
-    name: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-}) {
+type NavItem = {
+  name: string;
+  icon: LucideIcon;
+  url?: string;
+  onClick?: () => void;
+  badge?: number;
+};
+
+export function NavProjects({ projects }: { projects: NavItem[] }) {
   const pathname = usePathname();
 
   return (
     <SidebarGroup>
-      {/* <SidebarGroupLabel>Projects</SidebarGroupLabel> */}
-
       <SidebarMenu>
         {projects.map((item) => {
-          const isActive =
-            pathname === item.url || pathname.startsWith(`${item.url}/`);
+          const isActive = item.url
+            ? pathname === item.url || pathname.startsWith(`${item.url}/`)
+            : false;
+
+          const content = (
+            <>
+              <span className="relative">
+                <item.icon />
+                {item.badge !== undefined && item.badge > 0 && (
+                  <span
+                    className={cn(
+                      'absolute -right-2 -top-2 flex size-4 items-center justify-center rounded-full bg-primary text-[9px] font-semibold text-primary-foreground',
+                      'group-data-[collapsible=icon]:-right-1 group-data-[collapsible=icon]:-top-1',
+                    )}>
+                    {item.badge > 99 ? '99+' : item.badge}
+                  </span>
+                )}
+              </span>
+              <span>{item.name}</span>
+            </>
+          );
 
           return (
             <SidebarMenuItem key={item.name}>
-              <SidebarMenuButton
-                asChild
-                isActive={isActive}
-                tooltip={item.name}>
-                <Link href={item.url}>
-                  <item.icon />
-                  <span>{item.name}</span>
-                </Link>
-              </SidebarMenuButton>
+              {item.onClick ? (
+                <SidebarMenuButton
+                  type="button"
+                  tooltip={item.name}
+                  onClick={item.onClick}>
+                  {content}
+                </SidebarMenuButton>
+              ) : (
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive}
+                  tooltip={item.name}>
+                  <Link href={item.url!}>{content}</Link>
+                </SidebarMenuButton>
+              )}
             </SidebarMenuItem>
           );
         })}
@@ -49,4 +72,3 @@ export function NavProjects({
     </SidebarGroup>
   );
 }
-

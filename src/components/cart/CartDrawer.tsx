@@ -1,6 +1,7 @@
 'use client';
 
 import { X, Trash2 } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
 import { useCartStore } from '../../stores/cart';
 
 import {
@@ -260,14 +261,16 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             <span>EGP {summary.total.toFixed(2)}</span>
           </div>
 
-          <button
+          <Link
+            href="/checkout"
+            onClick={onClose}
             className="
-              mt-4 w-full rounded-md
-              bg-primary p-3
+              mt-4 block w-full rounded-md
+              bg-primary p-3 text-center
               text-primary-foreground
             ">
             Checkout
-          </button>
+          </Link>
         </div>
       )}
     </aside>

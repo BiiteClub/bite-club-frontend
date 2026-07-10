@@ -10,7 +10,7 @@ const tokyoKitchen: RestaurantDetail = {
   name: 'Tokyo Kitchen',
   categories: ['Asian', 'Seafood'],
   delivery: true,
-  pickup: false,
+  pickup: true,
   creditCard: false,
   isAvailable: true,
   minDeliveryTime: 35,

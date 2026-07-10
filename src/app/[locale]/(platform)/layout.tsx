@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/sidebar';
 import { getSavedLocation } from '@/utils/map';
 import LocationButtonServer from '@/components/location/location-button-server';
+import CartDrawerHost from '@/components/cart/CartDrawerHost';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -62,6 +63,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         <main className="min-h-[200vh] p-4">{children}</main>
       </SidebarInset>
+      <CartDrawerHost />
     </SidebarProvider>
   );
 }
